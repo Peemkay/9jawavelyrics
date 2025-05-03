@@ -1,0 +1,1046 @@
+{% extends "base.html" %}
+
+{% block title %}Artwork Maker - 9jaWaveLyrics{% endblock %}
+
+{% block extra_css %}
+<link href="https://unpkg.com/cropperjs@1.5.12/dist/cropper.min.css" rel="stylesheet">
+<style>
+    .editor-container {
+        min-height: 600px;
+    }
+
+    /* Ad container styles */
+    .ad-container {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 20px;
+        text-align: center;
+        position: relative;
+        min-height: 250px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .ad-label {
+        position: absolute;
+        top: 5px;
+        left: 10px;
+        font-size: 10px;
+        color: #999;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .sidebar-ad-slot {
+        width: 100%;
+        min-height: 250px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Bottom ad container */
+    .bottom-ad-container {
+        margin-top: 30px;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .bottom-ad-slot {
+        width: 100%;
+        min-height: 90px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .canvas-container {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+        overflow: hidden;
+    }
+    .tools-panel {
+        height: 100%;
+        overflow-y: auto;
+    }
+    .color-picker {
+        width: 100%;
+        height: 40px;
+        padding: 0;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+    }
+    .preview-container {
+        max-width: 100%;
+        max-height: 500px;
+        margin: 0 auto;
+        overflow: hidden;
+        position: relative;
+    }
+    .preview-image {
+        max-width: 100%;
+        max-height: 500px;
+        display: block;
+        margin: 0 auto;
+    }
+    .overlay-preview {
+        position: absolute;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+    }
+    .text-preview {
+        position: absolute;
+        pointer-events: none;
+    }
+    .upload-area {
+        border: 2px dashed #dee2e6;
+        border-radius: 0.25rem;
+        padding: 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .upload-area:hover {
+        border-color: #6c757d;
+        background-color: #f8f9fa;
+    }
+    .tab-content {
+        padding: 1rem;
+        border: 1px solid #dee2e6;
+        border-top: none;
+        border-radius: 0 0 0.25rem 0.25rem;
+    }
+    .font-preview {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Element transformation styles */
+    .editor-element {
+        position: absolute;
+        cursor: move;
+        user-select: none;
+    }
+
+    .editor-element.selected {
+        outline: 2px dashed var(--primary-color);
+    }
+
+    .transform-controls {
+        position: absolute;
+        display: none;
+        z-index: 100;
+    }
+
+    .editor-element.selected .transform-controls {
+        display: block;
+    }
+
+    .transform-handle {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background-color: white;
+        border: 1px solid var(--primary-color);
+        z-index: 101;
+    }
+
+    .transform-handle.top-left {
+        top: -5px;
+        left: -5px;
+        cursor: nw-resize;
+    }
+
+    .transform-handle.top-right {
+        top: -5px;
+        right: -5px;
+        cursor: ne-resize;
+    }
+
+    .transform-handle.bottom-left {
+        bottom: -5px;
+        left: -5px;
+        cursor: sw-resize;
+    }
+
+    .transform-handle.bottom-right {
+        bottom: -5px;
+        right: -5px;
+        cursor: se-resize;
+    }
+
+    .transform-handle.rotate {
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 50%;
+        cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAAA70lEQVRYhe2XMQ6CMBSGfxJPYDyBwcTRRO/gIRxNPIBewNHEeAKv4OYFHJwcHZzEzUE3E0dfoQQopS1Qmpi+pOFl+L4/Ly0hiqIIHaLrNB0CcKcEIKIUgDscZyGSJEHTtNJrjDFYlgVCCPI8RxAEtWs0nfQKQCkFpRSe55UCAEAQBFgsFvB9H7ZtV67RdNIrgO/7mM1mAIDtdos4jgEAjDGsVqvSWgAYDAa1a5rQGwAAHMfBZDLBcrkEAOz3e4xGo9I1bdDaI+Ccwxij8jiOsdlsWts3BXgDvAHeAP8BQEQpAFzXRRzHnf8bcs5bvf8CuARJ+ZZvGUoAAAAASUVORK5CYII='), auto;
+    }
+
+    .element-toolbar {
+        position: absolute;
+        top: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: white;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        padding: 2px;
+        display: none;
+        white-space: nowrap;
+    }
+
+    .editor-element.selected .element-toolbar {
+        display: flex;
+    }
+
+    .element-toolbar button {
+        background: none;
+        border: none;
+        font-size: 14px;
+        padding: 2px 5px;
+        cursor: pointer;
+        color: #6c757d;
+    }
+
+    .element-toolbar button:hover {
+        color: var(--primary-color);
+    }
+
+    .element-toolbar .divider {
+        width: 1px;
+        background-color: #dee2e6;
+        margin: 0 2px;
+    }
+
+    /* Editor toolbar */
+    .editor-toolbar {
+        display: flex;
+        padding: 8px;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        margin-bottom: 10px;
+    }
+
+    .auto-save-status {
+        display: inline-block;
+        padding: 4px 8px;
+    }
+
+    /* Grid for snap-to-grid functionality */
+    .grid-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+        background-image: linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
+                          linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
+        background-size: 20px 20px;
+        display: none;
+    }
+
+    /* Rulers */
+    .rulers-container {
+        position: relative;
+        display: none;
+    }
+
+    .ruler {
+        position: absolute;
+        background-color: #f0f0f0;
+        z-index: 10;
+    }
+
+    .horizontal-ruler {
+        height: 20px;
+        left: 20px;
+        right: 0;
+        top: 0;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .vertical-ruler {
+        width: 20px;
+        top: 20px;
+        bottom: 0;
+        left: 0;
+        border-right: 1px solid #ccc;
+    }
+
+    .ruler-corner {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        top: 0;
+        left: 0;
+        background-color: #e0e0e0;
+        border-right: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
+        z-index: 11;
+    }
+
+    /* Guides */
+    .guide {
+        position: absolute;
+        pointer-events: none;
+        z-index: 5;
+        display: none;
+    }
+
+    .horizontal-guide {
+        height: 1px;
+        left: 0;
+        right: 0;
+        background-color: rgba(0, 120, 255, 0.5);
+    }
+
+    .vertical-guide {
+        width: 1px;
+        top: 0;
+        bottom: 0;
+        background-color: rgba(0, 120, 255, 0.5);
+    }
+
+    .custom-guides {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 4;
+    }
+
+    .custom-guide {
+        position: absolute;
+        background-color: rgba(255, 0, 127, 0.5);
+        z-index: 4;
+    }
+
+    .custom-guide.horizontal {
+        height: 1px;
+        left: 0;
+        right: 0;
+        cursor: ns-resize;
+    }
+
+    .custom-guide.vertical {
+        width: 1px;
+        top: 0;
+        bottom: 0;
+        cursor: ew-resize;
+    }
+
+    .custom-guide.active {
+        background-color: rgba(255, 0, 127, 0.8);
+    }
+
+    /* Smart guides */
+    .smart-guides {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 3;
+    }
+
+    /* Selection overlay for multiple selection */
+    .selection-overlay {
+        position: absolute;
+        border: 1px dashed var(--primary-color);
+        background-color: rgba(98, 0, 234, 0.1);
+        pointer-events: none;
+        z-index: 2;
+        display: none;
+    }
+
+    /* Context menu styles */
+    .context-menu {
+        position: absolute;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        padding: 8px 0;
+        z-index: 1000;
+        min-width: 180px;
+        display: none;
+        animation: fadeIn 0.15s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    .context-menu-item {
+        padding: 8px 16px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        transition: background-color 0.2s;
+        user-select: none;
+    }
+
+    .context-menu-item:hover {
+        background-color: #f5f5f5;
+    }
+
+    .context-menu-item i {
+        margin-right: 8px;
+        width: 16px;
+        text-align: center;
+        color: var(--primary-color);
+    }
+
+    .context-menu-divider {
+        height: 1px;
+        background-color: #e0e0e0;
+        margin: 4px 0;
+    }
+
+    /* Quick tools that appear on element selection */
+    .quick-tools {
+        position: absolute;
+        background-color: white;
+        border-radius: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: center;
+        padding: 4px;
+        z-index: 100;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity 0.2s, transform 0.2s;
+        pointer-events: none;
+    }
+
+    .quick-tools.visible {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    .quick-tool-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: none;
+        background-color: transparent;
+        color: #555;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 2px;
+        cursor: pointer;
+        transition: background-color 0.2s, color 0.2s;
+    }
+
+    .quick-tool-btn:hover {
+        background-color: #f0f0f0;
+        color: var(--primary-color);
+    }
+
+    .quick-tool-btn.active {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    /* Long-press indicator */
+    .long-press-indicator {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid var(--primary-color);
+        border-top-color: transparent;
+        animation: spin 1s linear infinite;
+        pointer-events: none;
+        z-index: 1000;
+        display: none;
+    }
+
+    @keyframes spin {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="mb-3">Artwork Maker</h1>
+        <p class="lead">Create professional album artwork for your music with our easy-to-use editor.</p>
+    </div>
+</div>
+
+<div class="row editor-container">
+    <!-- Left Panel: Tools -->
+    <div class="col-md-4 tools-panel">
+        <!-- Ad Container -->
+        <div class="ad-container mb-3">
+            <div class="ad-label">Advertisement</div>
+            <div id="sidebar-ad" class="sidebar-ad-slot">
+                <!-- AdSense ad will be inserted here -->
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs" id="editorTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="upload-tab" data-bs-toggle="tab" data-bs-target="#upload" type="button" role="tab" aria-controls="upload" aria-selected="true">
+                            <i class="fas fa-upload me-1"></i> Upload
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="text-tab" data-bs-toggle="tab" data-bs-target="#text" type="button" role="tab" aria-controls="text" aria-selected="false">
+                            <i class="fas fa-font me-1"></i> Text
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="overlay-tab" data-bs-toggle="tab" data-bs-target="#overlay" type="button" role="tab" aria-controls="overlay" aria-selected="false">
+                            <i class="fas fa-image me-1"></i> Overlay
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="edit-tab" data-bs-toggle="tab" data-bs-target="#edit" type="button" role="tab" aria-controls="edit" aria-selected="false">
+                            <i class="fas fa-crop-alt me-1"></i> Edit
+                        </button>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <div class="tab-content" id="editorTabsContent">
+                    <!-- Upload Tab -->
+                    <div class="tab-pane fade show active" id="upload" role="tabpanel" aria-labelledby="upload-tab">
+                        <div class="upload-area" id="dropArea">
+                            <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-muted"></i>
+                            <h5>Drag & Drop Your Image</h5>
+                            <p class="text-muted">or click to browse</p>
+                            <input type="file" id="imageUpload" class="d-none" accept="image/*">
+                        </div>
+                        <div class="mt-3">
+                            <p class="text-muted small">Recommended size: 3000x3000 pixels (square)</p>
+                            <p class="text-muted small">Supported formats: JPG, PNG, GIF</p>
+                        </div>
+                    </div>
+
+                    <!-- Text Tab -->
+                    <div class="tab-pane fade" id="text" role="tabpanel" aria-labelledby="text-tab">
+                        <div class="mb-3">
+                            <label for="textInput" class="form-label">Album Title / Text</label>
+                            <input type="text" class="form-control" id="textInput" placeholder="Enter text">
+                        </div>
+                        <div class="mb-3">
+                            <label for="fontSelect" class="form-label">Font</label>
+                            <select class="form-select" id="fontSelect">
+                                <option value="Arial">Arial</option>
+                                <option value="Helvetica">Helvetica</option>
+                                <option value="Times New Roman">Times New Roman</option>
+                                <option value="Georgia">Georgia</option>
+                                <option value="Verdana">Verdana</option>
+                                <option value="Courier New">Courier New</option>
+                            </select>
+                            <div class="font-preview mt-2" id="fontPreview">Preview Text</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fontSize" class="form-label">Size</label>
+                            <input type="range" class="form-range" id="fontSize" min="12" max="72" value="24">
+                            <div class="d-flex justify-content-between">
+                                <span>Small</span>
+                                <span id="fontSizeValue">24px</span>
+                                <span>Large</span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="textColor" class="form-label">Color</label>
+                            <input type="color" class="color-picker" id="textColor" value="#ffffff">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Style</label>
+                            <div class="btn-group w-100" role="group">
+                                <button type="button" class="btn btn-outline-secondary" id="textBold">
+                                    <i class="fas fa-bold"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" id="textItalic">
+                                    <i class="fas fa-italic"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" id="textUnderline">
+                                    <i class="fas fa-underline"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary w-100" id="addTextBtn">
+                            <i class="fas fa-plus me-1"></i> Add Text
+                        </button>
+                    </div>
+
+                    <!-- Overlay Tab -->
+                    <div class="tab-pane fade" id="overlay" role="tabpanel" aria-labelledby="overlay-tab">
+                        <div class="mb-3">
+                            <label for="overlayUpload" class="form-label">Upload Logo/Image</label>
+                            <div class="upload-area" id="overlayDropArea">
+                                <i class="fas fa-image fa-2x mb-2 text-muted"></i>
+                                <p class="mb-0">Drag & Drop or Click to Browse</p>
+                                <input type="file" id="overlayUpload" class="d-none" accept="image/*">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="overlaySize" class="form-label">Size</label>
+                            <input type="range" class="form-range" id="overlaySize" min="10" max="100" value="50">
+                            <div class="d-flex justify-content-between">
+                                <span>Small</span>
+                                <span id="overlaySizeValue">50%</span>
+                                <span>Large</span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="overlayOpacity" class="form-label">Opacity</label>
+                            <input type="range" class="form-range" id="overlayOpacity" min="0" max="100" value="100">
+                            <div class="d-flex justify-content-between">
+                                <span>Transparent</span>
+                                <span id="overlayOpacityValue">100%</span>
+                                <span>Solid</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary w-100" id="addOverlayBtn">
+                            <i class="fas fa-plus me-1"></i> Add Overlay
+                        </button>
+                    </div>
+
+                    <!-- Edit Tab -->
+                    <div class="tab-pane fade" id="edit" role="tabpanel" aria-labelledby="edit-tab">
+                        <div class="mb-3">
+                            <label class="form-label">Crop & Resize</label>
+                            <div class="btn-group w-100 mb-3" role="group">
+                                <button type="button" class="btn btn-outline-secondary" id="cropBtn">
+                                    <i class="fas fa-crop-alt me-1"></i> Crop
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" id="resizeBtn">
+                                    <i class="fas fa-expand-arrows-alt me-1"></i> Resize
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mb-3" id="resizeControls" style="display: none;">
+                            <div class="mb-3">
+                                <label class="form-label">Standard Sizes for Music Distribution</label>
+                                <select class="form-select mb-2" id="standardSizes">
+                                    <option value="">Custom Size</option>
+                                    <option value="4000,4000">Premium Quality (4000 x 4000 px)</option>
+                                    <option value="3000,3000">High Quality (3000 x 3000 px)</option>
+                                    <option value="2400,2400">Standard Quality (2400 x 2400 px)</option>
+                                    <option value="1800,1800">Minimum Recommended (1800 x 1800 px)</option>
+                                    <option value="1400,1400">Minimum Required (1400 x 1400 px)</option>
+                                </select>
+                                <div class="alert alert-info small">
+                                    <i class="fas fa-info-circle me-1"></i> Most music platforms require artwork to be:
+                                    <ul class="mb-0 mt-1">
+                                        <li>Square format (1:1 aspect ratio)</li>
+                                        <li>Minimum 1400 x 1400 pixels</li>
+                                        <li>Maximum 4000 x 4000 pixels</li>
+                                        <li>JPG or PNG format</li>
+                                        <li>RGB color space</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="row g-2 mb-2">
+                                <div class="col">
+                                    <label for="resizeWidth" class="form-label">Width (px)</label>
+                                    <input type="number" class="form-control" id="resizeWidth" placeholder="Width">
+                                </div>
+                                <div class="col">
+                                    <label for="resizeHeight" class="form-label">Height (px)</label>
+                                    <input type="number" class="form-control" id="resizeHeight" placeholder="Height">
+                                </div>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="maintainAspectRatio" checked>
+                                <label class="form-check-label" for="maintainAspectRatio">
+                                    Maintain aspect ratio
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="forceSquare">
+                                <label class="form-check-label" for="forceSquare">
+                                    Force square format (recommended)
+                                </label>
+                            </div>
+                            <button class="btn btn-primary w-100" id="applyResizeBtn">Apply Resize</button>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Background</label>
+                            <div class="btn-group w-100 mb-3" role="group">
+                                <button type="button" class="btn btn-outline-secondary" id="removeBackgroundBtn">
+                                    <i class="fas fa-eraser me-1"></i> Remove
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" id="replaceBackgroundBtn">
+                                    <i class="fas fa-fill-drip me-1"></i> Replace
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mb-3" id="backgroundColorControls" style="display: none;">
+                            <label for="backgroundColor" class="form-label">Background Color</label>
+                            <input type="color" class="color-picker" id="backgroundColor" value="#000000">
+                            <button class="btn btn-primary w-100 mt-2" id="applyBackgroundBtn">Apply Background</button>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Platform Requirements</label>
+                            <div class="accordion" id="platformRequirements">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="spotifyHeading">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#spotifyCollapse" aria-expanded="false" aria-controls="spotifyCollapse">
+                                            <i class="fab fa-spotify me-2"></i> Spotify
+                                        </button>
+                                    </h2>
+                                    <div id="spotifyCollapse" class="accordion-collapse collapse" aria-labelledby="spotifyHeading" data-bs-parent="#platformRequirements">
+                                        <div class="accordion-body small">
+                                            <ul class="mb-0">
+                                                <li>Minimum size: 1400 x 1400 pixels</li>
+                                                <li>Recommended: 3000 x 3000 pixels</li>
+                                                <li>Square format (1:1 aspect ratio)</li>
+                                                <li>JPG format preferred</li>
+                                                <li>No explicit content or QR codes</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="appleMusicHeading">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#appleMusicCollapse" aria-expanded="false" aria-controls="appleMusicCollapse">
+                                            <i class="fab fa-apple me-2"></i> Apple Music
+                                        </button>
+                                    </h2>
+                                    <div id="appleMusicCollapse" class="accordion-collapse collapse" aria-labelledby="appleMusicHeading" data-bs-parent="#platformRequirements">
+                                        <div class="accordion-body small">
+                                            <ul class="mb-0">
+                                                <li>Minimum size: 1400 x 1400 pixels</li>
+                                                <li>Recommended: 3000 x 3000 pixels</li>
+                                                <li>Square format (1:1 aspect ratio)</li>
+                                                <li>JPG or PNG format</li>
+                                                <li>RGB color space</li>
+                                                <li>No URLs, contact info, or QR codes</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="amazonMusicHeading">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#amazonMusicCollapse" aria-expanded="false" aria-controls="amazonMusicCollapse">
+                                            <i class="fab fa-amazon me-2"></i> Amazon Music
+                                        </button>
+                                    </h2>
+                                    <div id="amazonMusicCollapse" class="accordion-collapse collapse" aria-labelledby="amazonMusicHeading" data-bs-parent="#platformRequirements">
+                                        <div class="accordion-body small">
+                                            <ul class="mb-0">
+                                                <li>Minimum size: 1400 x 1400 pixels</li>
+                                                <li>Recommended: 3000 x 3000 pixels</li>
+                                                <li>Square format (1:1 aspect ratio)</li>
+                                                <li>JPG or PNG format</li>
+                                                <li>No explicit content or QR codes</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="otherPlatformsHeading">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#otherPlatformsCollapse" aria-expanded="false" aria-controls="otherPlatformsCollapse">
+                                            <i class="fas fa-music me-2"></i> Other Platforms
+                                        </button>
+                                    </h2>
+                                    <div id="otherPlatformsCollapse" class="accordion-collapse collapse" aria-labelledby="otherPlatformsHeading" data-bs-parent="#platformRequirements">
+                                        <div class="accordion-body small">
+                                            <p class="mb-2">Most other platforms (Deezer, Tidal, YouTube Music, etc.) follow similar guidelines:</p>
+                                            <ul class="mb-0">
+                                                <li>Minimum size: 1400 x 1400 pixels</li>
+                                                <li>Square format (1:1 aspect ratio)</li>
+                                                <li>JPG or PNG format</li>
+                                                <li>No explicit content, URLs, or QR codes</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Export Options -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Export</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="exportFormat" class="form-label">Format</label>
+                    <select class="form-select" id="exportFormat">
+                        <option value="jpg">JPG (Recommended)</option>
+                        <option value="png">PNG</option>
+                    </select>
+                    <small class="text-muted">JPG is preferred by most music platforms.</small>
+                </div>
+                <div class="mb-3">
+                    <label for="exportQuality" class="form-label">Quality</label>
+                    <input type="range" class="form-range" id="exportQuality" min="70" max="100" value="95">
+                    <div class="d-flex justify-content-between">
+                        <span>Lower</span>
+                        <span id="exportQualityValue">95%</span>
+                        <span>Higher</span>
+                    </div>
+                    <small class="text-muted">High quality is essential for music distribution.</small>
+                </div>
+                <div class="mb-3">
+                    <label for="exportSize" class="form-label">Export Size</label>
+                    <select class="form-select" id="exportSize">
+                        <option value="original">Original Size</option>
+                        <option value="4000,4000" selected>4000 x 4000 px (Premium)</option>
+                        <option value="3000,3000">3000 x 3000 px (High Quality)</option>
+                        <option value="2400,2400">2400 x 2400 px (Standard)</option>
+                    </select>
+                    <small class="text-muted">Larger sizes provide better quality on all platforms.</small>
+                </div>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="optimizeForDistribution" checked>
+                    <label class="form-check-label" for="optimizeForDistribution">
+                        Optimize for music distribution
+                    </label>
+                    <small class="d-block text-muted">Ensures artwork meets platform requirements.</small>
+                </div>
+                <button class="btn btn-success w-100" id="downloadBtn">
+                    <i class="fas fa-download me-1"></i> Download Artwork
+                </button>
+                <div class="mt-2 text-center">
+                    <small class="text-muted">Your artwork will be optimized for all major music platforms.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Panel: Canvas -->
+    <div class="col-md-8">
+        <div class="canvas-container">
+            <!-- Editor Toolbar -->
+            <div class="editor-toolbar mb-2">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="undoBtn" title="Undo (Ctrl+Z)" disabled>
+                        <i class="fas fa-undo"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="redoBtn" title="Redo (Ctrl+Y)" disabled>
+                        <i class="fas fa-redo"></i>
+                    </button>
+                </div>
+
+                <!-- Alignment Tools -->
+                <div class="dropdown ms-2">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="alignmentDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-align-center me-1"></i> Align
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="alignmentDropdown">
+                        <li><h6 class="dropdown-header">Horizontal Alignment</h6></li>
+                        <li><button class="dropdown-item" id="alignLeftBtn"><i class="fas fa-align-left me-2"></i> Align Left</button></li>
+                        <li><button class="dropdown-item" id="alignCenterHBtn"><i class="fas fa-align-center me-2"></i> Align Center</button></li>
+                        <li><button class="dropdown-item" id="alignRightBtn"><i class="fas fa-align-right me-2"></i> Align Right</button></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><h6 class="dropdown-header">Vertical Alignment</h6></li>
+                        <li><button class="dropdown-item" id="alignTopBtn"><i class="fas fa-arrow-up me-2"></i> Align Top</button></li>
+                        <li><button class="dropdown-item" id="alignMiddleBtn"><i class="fas fa-arrows-alt-v me-2"></i> Align Middle</button></li>
+                        <li><button class="dropdown-item" id="alignBottomBtn"><i class="fas fa-arrow-down me-2"></i> Align Bottom</button></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><h6 class="dropdown-header">Distribution</h6></li>
+                        <li><button class="dropdown-item" id="distributeHorizontallyBtn"><i class="fas fa-arrows-alt-h me-2"></i> Distribute Horizontally</button></li>
+                        <li><button class="dropdown-item" id="distributeVerticallyBtn"><i class="fas fa-arrows-alt-v me-2"></i> Distribute Vertically</button></li>
+                    </ul>
+                </div>
+
+                <!-- Grid and Snap Tools -->
+                <div class="dropdown ms-2">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="gridDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-th me-1"></i> Grid
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="gridDropdown">
+                        <li>
+                            <div class="dropdown-item">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="showGridBtn">
+                                    <label class="form-check-label" for="showGridBtn">Show Grid</label>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="dropdown-item">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="snapToGridBtn">
+                                    <label class="form-check-label" for="snapToGridBtn">Snap to Grid</label>
+                                </div>
+                            </div>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><h6 class="dropdown-header">Grid Size</h6></li>
+                        <li>
+                            <div class="dropdown-item px-3">
+                                <input type="range" class="form-range" id="gridSizeSlider" min="5" max="50" step="5" value="20">
+                                <div class="d-flex justify-content-between">
+                                    <small>5px</small>
+                                    <small id="gridSizeValue">20px</small>
+                                    <small>50px</small>
+                                </div>
+                            </div>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><h6 class="dropdown-header">Guides</h6></li>
+                        <li>
+                            <div class="dropdown-item">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="showRulersBtn">
+                                    <label class="form-check-label" for="showRulersBtn">Show Rulers</label>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="dropdown-item">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="showGuidesBtn">
+                                    <label class="form-check-label" for="showGuidesBtn">Show Guides</label>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Arrangement Tools -->
+                <div class="dropdown ms-2">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="arrangeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-layer-group me-1"></i> Arrange
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="arrangeDropdown">
+                        <li><button class="dropdown-item" id="bringToFrontBtn"><i class="fas fa-level-up-alt me-2"></i> Bring to Front</button></li>
+                        <li><button class="dropdown-item" id="sendToBackBtn"><i class="fas fa-level-down-alt me-2"></i> Send to Back</button></li>
+                        <li><button class="dropdown-item" id="bringForwardBtn"><i class="fas fa-arrow-up me-2"></i> Bring Forward</button></li>
+                        <li><button class="dropdown-item" id="sendBackwardBtn"><i class="fas fa-arrow-down me-2"></i> Send Backward</button></li>
+                    </ul>
+                </div>
+
+                <div class="ms-auto">
+                    <span class="auto-save-status text-muted small">Auto-save enabled</span>
+                </div>
+            </div>
+
+            <!-- Rulers -->
+            <div class="rulers-container" id="rulersContainer">
+                <div class="ruler horizontal-ruler" id="horizontalRuler"></div>
+                <div class="ruler vertical-ruler" id="verticalRuler"></div>
+                <div class="ruler-corner"></div>
+            </div>
+
+            <div class="preview-container" id="previewContainer">
+                <!-- Smart Guides -->
+                <div id="smartGuides" class="smart-guides">
+                    <div class="guide horizontal-guide" id="horizontalGuide"></div>
+                    <div class="guide vertical-guide" id="verticalGuide"></div>
+                </div>
+
+                <!-- Custom Guides Container -->
+                <div id="customGuides" class="custom-guides"></div>
+
+                <div class="text-center py-5" id="noImageMessage">
+                    <i class="fas fa-image fa-5x mb-3 text-muted"></i>
+                    <h4>No Image Uploaded</h4>
+                    <p>Upload an image to start creating your album artwork</p>
+                </div>
+                <img id="previewImage" class="preview-image" style="display: none;">
+                <div id="gridOverlay" class="grid-overlay"></div>
+                <div id="textOverlays" class="text-overlays"></div>
+                <div id="imageOverlays" class="image-overlays"></div>
+
+                <!-- Selection Overlay for Multiple Selection -->
+                <div id="selectionOverlay" class="selection-overlay"></div>
+
+                <!-- Quick Tools -->
+                <div id="quickTools" class="quick-tools">
+                    <button class="quick-tool-btn" id="quickEditBtn" title="Edit">
+                        <i class="fas fa-pen"></i>
+                    </button>
+                    <button class="quick-tool-btn" id="quickDuplicateBtn" title="Duplicate">
+                        <i class="fas fa-clone"></i>
+                    </button>
+                    <button class="quick-tool-btn" id="quickDeleteBtn" title="Delete">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                    <button class="quick-tool-btn" id="quickFrontBtn" title="Bring to Front">
+                        <i class="fas fa-level-up-alt"></i>
+                    </button>
+                    <button class="quick-tool-btn" id="quickBackBtn" title="Send to Back">
+                        <i class="fas fa-level-down-alt"></i>
+                    </button>
+                </div>
+
+                <!-- Context Menu -->
+                <div id="contextMenu" class="context-menu">
+                    <div class="context-menu-item" id="editMenuItem">
+                        <i class="fas fa-pen"></i> Edit
+                    </div>
+                    <div class="context-menu-item" id="duplicateMenuItem">
+                        <i class="fas fa-clone"></i> Duplicate
+                    </div>
+                    <div class="context-menu-divider"></div>
+                    <div class="context-menu-item" id="flipHMenuItem">
+                        <i class="fas fa-arrows-alt-h"></i> Flip Horizontal
+                    </div>
+                    <div class="context-menu-item" id="flipVMenuItem">
+                        <i class="fas fa-arrows-alt-v"></i> Flip Vertical
+                    </div>
+                    <div class="context-menu-divider"></div>
+                    <div class="context-menu-item" id="frontMenuItem">
+                        <i class="fas fa-level-up-alt"></i> Bring to Front
+                    </div>
+                    <div class="context-menu-item" id="backMenuItem">
+                        <i class="fas fa-level-down-alt"></i> Send to Back
+                    </div>
+                    <div class="context-menu-divider"></div>
+                    <div class="context-menu-item" id="deleteMenuItem">
+                        <i class="fas fa-trash-alt"></i> Delete
+                    </div>
+                </div>
+
+                <!-- Long Press Indicator -->
+                <div id="longPressIndicator" class="long-press-indicator"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bottom Ad Container -->
+<div class="container-fluid mt-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="bottom-ad-container">
+                <div class="ad-label">Advertisement</div>
+                <div id="bottom-ad" class="bottom-ad-slot">
+                    <!-- AdSense ad will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/cropperjs@1.5.12/dist/cropper.min.js"></script>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="{{ url_for('static', filename='js/editor.js') }}"></script>
+<script src="{{ url_for('static', filename='js/ad-fallback.js') }}"></script>
+{% endblock %}

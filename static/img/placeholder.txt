@@ -1,0 +1,1 @@
+This is a placeholder for the hero image. In a production environment, you would have a real image here.

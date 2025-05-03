@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}9jaWaveLyrics - Album Artwork Maker{% endblock %}
+
+{% block content %}
+<div class="row align-items-center">
+    <div class="col-lg-6">
+        <h1 class="display-4 fw-bold mb-4">Create Professional Album Artwork</h1>
+        <p class="lead mb-4">Design stunning album covers for your music with our easy-to-use artwork maker. Perfect for all music distribution platforms.</p>
+        <div class="features mb-4">
+            <div class="feature d-flex align-items-center mb-3">
+                <div class="feature-icon bg-primary text-white rounded-circle p-3 me-3">
+                    <i class="fas fa-image"></i>
+                </div>
+                <div class="feature-text">
+                    <h5 class="mb-1">Upload Your Photos</h5>
+                    <p class="mb-0">Start with your own images and transform them into professional album covers.</p>
+                </div>
+            </div>
+            <div class="feature d-flex align-items-center mb-3">
+                <div class="feature-icon bg-primary text-white rounded-circle p-3 me-3">
+                    <i class="fas fa-font"></i>
+                </div>
+                <div class="feature-text">
+                    <h5 class="mb-1">Add Text & Titles</h5>
+                    <p class="mb-0">Customize with album titles, artist names, and more with beautiful typography.</p>
+                </div>
+            </div>
+            <div class="feature d-flex align-items-center mb-3">
+                <div class="feature-icon bg-primary text-white rounded-circle p-3 me-3">
+                    <i class="fas fa-crop-alt"></i>
+                </div>
+                <div class="feature-text">
+                    <h5 class="mb-1">Crop & Resize</h5>
+                    <p class="mb-0">Perfect your artwork with professional editing tools for the ideal dimensions.</p>
+                </div>
+            </div>
+            <div class="feature d-flex align-items-center">
+                <div class="feature-icon bg-primary text-white rounded-circle p-3 me-3">
+                    <i class="fas fa-download"></i>
+                </div>
+                <div class="feature-text">
+                    <h5 class="mb-1">Download & Share</h5>
+                    <p class="mb-0">Export your artwork in high quality for all music distribution platforms.</p>
+                </div>
+            </div>
+        </div>
+        <a href="{{ url_for('editor') }}" class="btn btn-primary btn-lg">Start Creating Now <i class="fas fa-arrow-right ms-2"></i></a>
+    </div>
+    <div class="col-lg-6">
+        <div class="hero-image text-center">
+            <img src="{{ url_for('static', filename='img/hero-image.png') }}" alt="Album Artwork Example" class="img-fluid rounded shadow-lg">
+        </div>
+    </div>
+</div>
+
+<hr class="my-5">
+
+<div class="row text-center">
+    <div class="col-12">
+        <h2 class="mb-4">How It Works</h2>
+    </div>
+</div>
+
+<div class="row mb-5">
+    <div class="col-md-3">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="step-icon bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                    <i class="fas fa-upload text-primary fa-2x"></i>
+                </div>
+                <h5 class="card-title">1. Upload</h5>
+                <p class="card-text">Upload your photo or choose from our templates.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="step-icon bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                    <i class="fas fa-edit text-primary fa-2x"></i>
+                </div>
+                <h5 class="card-title">2. Edit</h5>
+                <p class="card-text">Customize with text, logos, and adjust the layout.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="step-icon bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                    <i class="fas fa-magic text-primary fa-2x"></i>
+                </div>
+                <h5 class="card-title">3. Enhance</h5>
+                <p class="card-text">Apply filters, adjust colors, and perfect your design.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="step-icon bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                    <i class="fas fa-download text-primary fa-2x"></i>
+                </div>
+                <h5 class="card-title">4. Download</h5>
+                <p class="card-text">Export your artwork in high quality for distribution.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="cta-section bg-light p-5 rounded text-center">
+    <h2 class="mb-3">Ready to Create Your Album Artwork?</h2>
+    <p class="lead mb-4">Join thousands of artists who use 9jaWaveLyrics to create professional album covers.</p>
+    <a href="{{ url_for('editor') }}" class="btn btn-primary btn-lg">Get Started Now</a>
+</div>
+{% endblock %}

@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}About - 9jaWaveLyrics Artwork Maker{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <h1 class="mb-4">About 9jaWaveLyrics Artwork Maker</h1>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="h4 mb-3">Our Mission</h2>
+                <p>9jaWaveLyrics Artwork Maker was created to empower musicians and artists to create professional album artwork without the need for expensive design software or graphic design skills. We believe that every artist deserves to have high-quality visuals to accompany their music.</p>
+                
+                <p>Our goal is to provide a simple yet powerful tool that meets all the requirements of modern music distribution platforms while allowing for creative expression and unique designs.</p>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="h4 mb-3">Features</h2>
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <i class="fas fa-check-circle text-success me-2"></i> Photo uploading and editing
+                            </li>
+                            <li class="list-group-item">
+                                <i class="fas fa-check-circle text-success me-2"></i> Text and typography tools
+                            </li>
+                            <li class="list-group-item">
+                                <i class="fas fa-check-circle text-success me-2"></i> Logo and image overlays
+                            </li>
+                            <li class="list-group-item">
+                                <i class="fas fa-check-circle text-success me-2"></i> Crop and resize functionality
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <i class="fas fa-check-circle text-success me-2"></i> Background editing tools
+                            </li>
+                            <li class="list-group-item">
+                                <i class="fas fa-check-circle text-success me-2"></i> High-quality exports
+                            </li>
+                            <li class="list-group-item">
+                                <i class="fas fa-check-circle text-success me-2"></i> Industry-standard dimensions
+                            </li>
+                            <li class="list-group-item">
+                                <i class="fas fa-check-circle text-success me-2"></i> User-friendly interface
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="h4 mb-3">Why Choose Us?</h2>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="fas fa-bolt text-warning me-2"></i> Fast & Easy
+                                </h5>
+                                <p class="card-text">Create professional album artwork in minutes, not hours. Our intuitive interface makes the process simple and straightforward.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="fas fa-laptop text-info me-2"></i> No Software Needed
+                                </h5>
+                                <p class="card-text">Everything runs in your web browser. No need to download or install any software on your computer.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="fas fa-check-double text-success me-2"></i> Industry Standards
+                                </h5>
+                                <p class="card-text">All artwork created with our tool meets the requirements of major music distribution platforms.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="fas fa-palette text-primary me-2"></i> Creative Freedom
+                                </h5>
+                                <p class="card-text">Express your artistic vision with our wide range of editing tools and customization options.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="h4 mb-3">Technical Specifications</h2>
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <th scope="row">Recommended Dimensions</th>
+                            <td>3000 x 3000 pixels (square)</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Minimum Dimensions</th>
+                            <td>1400 x 1400 pixels</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Supported File Formats</th>
+                            <td>JPG, PNG, GIF</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Maximum File Size</th>
+                            <td>16 MB</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Export Formats</th>
+                            <td>JPG, PNG</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-body text-center">
+                <h2 class="h4 mb-3">Ready to Create Your Album Artwork?</h2>
+                <p class="mb-4">Start designing your professional album cover today with our easy-to-use editor.</p>
+                <a href="{{ url_for('editor') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-paint-brush me-2"></i> Start Creating
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,316 @@
+{% extends "base.html" %}
+
+{% block title %}9jaWaveLyrics - Pricing{% endblock %}
+
+{% block styles %}
+<style>
+    .pricing-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+    
+    .pricing-header {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+    
+    .pricing-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        color: var(--primary-color);
+    }
+    
+    .pricing-header p {
+        font-size: 1.2rem;
+        color: #666;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    
+    .pricing-plans {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 30px;
+    }
+    
+    .pricing-plan {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        width: 300px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .pricing-plan:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .pricing-plan.popular {
+        border: 2px solid var(--primary-color);
+        position: relative;
+    }
+    
+    .popular-badge {
+        position: absolute;
+        top: -12px;
+        right: 20px;
+        background-color: var(--primary-color);
+        color: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+    
+    .plan-name {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: var(--primary-color);
+    }
+    
+    .plan-price {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    
+    .plan-billing {
+        color: #888;
+        margin-bottom: 20px;
+    }
+    
+    .plan-features {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 30px 0;
+    }
+    
+    .plan-features li {
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        align-items: center;
+    }
+    
+    .plan-features li:last-child {
+        border-bottom: none;
+    }
+    
+    .plan-features i {
+        color: var(--primary-color);
+        margin-right: 10px;
+    }
+    
+    .plan-features .not-included {
+        color: #ccc;
+    }
+    
+    .plan-features .not-included i {
+        color: #ddd;
+    }
+    
+    .plan-cta {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+    
+    .plan-cta:hover {
+        background-color: var(--primary-dark);
+    }
+    
+    .plan-cta.secondary {
+        background-color: transparent;
+        border: 2px solid var(--primary-color);
+        color: var(--primary-color);
+    }
+    
+    .plan-cta.secondary:hover {
+        background-color: rgba(98, 0, 234, 0.1);
+    }
+    
+    .faq-section {
+        max-width: 800px;
+        margin: 80px auto 0;
+    }
+    
+    .faq-section h2 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: var(--primary-color);
+    }
+    
+    .faq-item {
+        margin-bottom: 20px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 20px;
+    }
+    
+    .faq-question {
+        font-weight: bold;
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+        color: #333;
+    }
+    
+    .faq-answer {
+        color: #666;
+        line-height: 1.6;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="pricing-container">
+    <div class="pricing-header">
+        <h1>Choose Your Plan</h1>
+        <p>Select the perfect plan for your music artwork needs. All plans include access to our artwork editor with different levels of features.</p>
+    </div>
+    
+    <div class="pricing-plans">
+        <!-- Free Plan -->
+        <div class="pricing-plan">
+            <div class="plan-name">Free</div>
+            <div class="plan-price">$0</div>
+            <div class="plan-billing">Forever free</div>
+            <ul class="plan-features">
+                <li><i class="fas fa-check"></i> Basic artwork editor</li>
+                <li><i class="fas fa-check"></i> 5 basic templates</li>
+                <li><i class="fas fa-check"></i> Export up to 1400x1400px</li>
+                <li><i class="fas fa-check"></i> Save up to 3 projects</li>
+                <li class="not-included"><i class="fas fa-times"></i> Premium templates</li>
+                <li class="not-included"><i class="fas fa-times"></i> High-resolution export</li>
+                <li class="not-included"><i class="fas fa-times"></i> Remove watermark</li>
+                <li class="not-included"><i class="fas fa-times"></i> Priority support</li>
+            </ul>
+            <a href="{{ url_for('editor') }}" class="plan-cta secondary">Start Free</a>
+        </div>
+        
+        <!-- Pro Plan -->
+        <div class="pricing-plan popular">
+            <div class="popular-badge">Most Popular</div>
+            <div class="plan-name">Pro</div>
+            <div class="plan-price">$9.99</div>
+            <div class="plan-billing">per month</div>
+            <ul class="plan-features">
+                <li><i class="fas fa-check"></i> Everything in Free</li>
+                <li><i class="fas fa-check"></i> 50+ premium templates</li>
+                <li><i class="fas fa-check"></i> Export up to 4000x4000px</li>
+                <li><i class="fas fa-check"></i> Unlimited saved projects</li>
+                <li><i class="fas fa-check"></i> No watermarks</li>
+                <li><i class="fas fa-check"></i> Advanced editing tools</li>
+                <li><i class="fas fa-check"></i> Cloud storage</li>
+                <li><i class="fas fa-check"></i> Priority email support</li>
+            </ul>
+            <button class="plan-cta" id="checkout-button-pro">Subscribe Now</button>
+        </div>
+        
+        <!-- Annual Plan -->
+        <div class="pricing-plan">
+            <div class="plan-name">Annual</div>
+            <div class="plan-price">$79.99</div>
+            <div class="plan-billing">per year (Save 33%)</div>
+            <ul class="plan-features">
+                <li><i class="fas fa-check"></i> Everything in Pro</li>
+                <li><i class="fas fa-check"></i> All future updates</li>
+                <li><i class="fas fa-check"></i> AI image enhancement</li>
+                <li><i class="fas fa-check"></i> Exclusive annual templates</li>
+                <li><i class="fas fa-check"></i> Batch processing</li>
+                <li><i class="fas fa-check"></i> Priority phone support</li>
+            </ul>
+            <button class="plan-cta" id="checkout-button-annual">Subscribe Yearly</button>
+        </div>
+    </div>
+    
+    <div class="faq-section">
+        <h2>Frequently Asked Questions</h2>
+        
+        <div class="faq-item">
+            <div class="faq-question">Can I cancel my subscription at any time?</div>
+            <div class="faq-answer">Yes, you can cancel your subscription at any time. Your access will continue until the end of your billing period.</div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">What payment methods do you accept?</div>
+            <div class="faq-answer">We accept all major credit cards, including Visa, Mastercard, American Express, and Discover. We also support PayPal.</div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">Is my payment information secure?</div>
+            <div class="faq-answer">Yes, all payments are processed securely through Stripe. We never store your credit card information on our servers.</div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">Can I upgrade or downgrade my plan?</div>
+            <div class="faq-answer">Yes, you can upgrade or downgrade your plan at any time. If you upgrade, you'll be charged the prorated difference. If you downgrade, the change will take effect at the end of your current billing period.</div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">Do you offer refunds?</div>
+            <div class="faq-answer">We offer a 14-day money-back guarantee for all new subscriptions. If you're not satisfied with our service, contact our support team within 14 days of your purchase for a full refund.</div>
+        </div>
+    </div>
+</div>
+
+<!-- Stripe integration -->
+<script>
+    document.getElementById('checkout-button-pro').addEventListener('click', function() {
+        fetch('/create-checkout-session', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                price_id: 'price_pro_monthly',
+                plan: 'pro'
+            })
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(session) {
+            window.location.href = session.url;
+        })
+        .catch(function(error) {
+            console.error('Error:', error);
+        });
+    });
+    
+    document.getElementById('checkout-button-annual').addEventListener('click', function() {
+        fetch('/create-checkout-session', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                price_id: 'price_pro_annual',
+                plan: 'annual'
+            })
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(session) {
+            window.location.href = session.url;
+        })
+        .catch(function(error) {
+            console.error('Error:', error);
+        });
+    });
+</script>
+{% endblock %}
